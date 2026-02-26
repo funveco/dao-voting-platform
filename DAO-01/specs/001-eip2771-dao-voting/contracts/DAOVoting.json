@@ -1,0 +1,372 @@
+{
+  "contractName": "DAOVoting",
+  "description": "DAO Governance Contract with EIP-2771 Gasless Voting Support",
+  "inherits": ["ERC2771Context"],
+
+  "types": {
+    "Proposal": {
+      "id": "uint256",
+      "creator": "address",
+      "recipient": "address",
+      "amount": "uint256",
+      "deadline": "uint256",
+      "forVotes": "uint256",
+      "againstVotes": "uint256",
+      "abstainVotes": "uint256",
+      "executed": "bool",
+      "createdAt": "uint256"
+    },
+    "VoteType": {
+      "NONE": 0,
+      "FOR": 1,
+      "AGAINST": 2,
+      "ABSTAIN": 3
+    }
+  },
+
+  "functions": [
+    {
+      "name": "fundDAO",
+      "type": "function",
+      "inputs": [],
+      "outputs": [],
+      "description": "Receive ETH into DAO treasury",
+      "stateMutability": "payable",
+      "prerequisites": ["msg.value > 0"],
+      "sideEffects": ["DAO balance increases by msg.value", "FundsReceived event emitted"]
+    },
+    {
+      "name": "createProposal",
+      "type": "function",
+      "inputs": [
+        {
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "name": "deadline",
+          "type": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "proposalId",
+          "type": "uint256"
+        }
+      ],
+      "description": "Create new governance proposal",
+      "stateMutability": "nonpayable",
+      "prerequisites": [
+        "msg.sender has >= 10% of total DAO balance",
+        "recipient != address(0)",
+        "amount > 0",
+        "deadline > block.timestamp"
+      ],
+      "sideEffects": [
+        "New proposal created with sequential ID",
+        "proposalCount incremented",
+        "All vote counts initialized to 0",
+        "executed set to false",
+        "ProposalCreated event emitted"
+      ],
+      "reverts": [
+        "InsufficientPowerToCreate: User balance < 10% of DAO balance",
+        "InvalidRecipient: recipient == address(0)",
+        "InvalidAmount: amount == 0",
+        "InvalidDeadline: deadline <= block.timestamp"
+      ]
+    },
+    {
+      "name": "vote",
+      "type": "function",
+      "inputs": [
+        {
+          "name": "proposalId",
+          "type": "uint256"
+        },
+        {
+          "name": "voteType",
+          "type": "uint8"
+        }
+      ],
+      "outputs": [],
+      "description": "Cast or change vote on proposal",
+      "stateMutability": "nonpayable",
+      "prerequisites": [
+        "proposalId exists",
+        "block.timestamp <= proposal.deadline",
+        "voteType in [1=FOR, 2=AGAINST, 3=ABSTAIN]"
+      ],
+      "sideEffects": [
+        "Previous vote removed from counts (if exists)",
+        "New vote added to counts",
+        "userVotes[proposalId][msg.sender] updated",
+        "VoteCast event emitted with current vote counts"
+      ],
+      "reverts": [
+        "ProposalNotFound: proposalId doesn't exist",
+        "DeadlinePassed: block.timestamp > deadline",
+        "InvalidVoteType: voteType not in valid range"
+      ]
+    },
+    {
+      "name": "executeProposal",
+      "type": "function",
+      "inputs": [
+        {
+          "name": "proposalId",
+          "type": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "success",
+          "type": "bool"
+        }
+      ],
+      "description": "Execute approved proposal (transfer funds)",
+      "stateMutability": "nonpayable",
+      "prerequisites": [
+        "proposalId exists",
+        "block.timestamp >= proposal.deadline + 7 days",
+        "proposal.forVotes > proposal.againstVotes",
+        "proposal.executed == false",
+        "address(this).balance >= proposal.amount"
+      ],
+      "sideEffects": [
+        "proposal.executed set to true",
+        "ETH transferred to proposal.recipient",
+        "ProposalExecuted event emitted"
+      ],
+      "reverts": [
+        "ProposalNotFound: proposalId doesn't exist",
+        "SafetyPeriodNotElapsed: deadline + 7 days not reached",
+        "ProposalNotApproved: forVotes <= againstVotes",
+        "AlreadyExecuted: proposal.executed == true",
+        "InsufficientFunds: DAO balance < proposal.amount"
+      ]
+    },
+    {
+      "name": "getProposal",
+      "type": "view",
+      "inputs": [
+        {
+          "name": "proposalId",
+          "type": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "proposal",
+          "type": "Proposal"
+        }
+      ],
+      "description": "Get full proposal data",
+      "stateMutability": "view",
+      "reverts": ["ProposalNotFound: proposalId doesn't exist"]
+    },
+    {
+      "name": "getUserBalance",
+      "type": "view",
+      "inputs": [
+        {
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "balance",
+          "type": "uint256"
+        }
+      ],
+      "description": "Get user's voting power (percentage as 0-100)",
+      "stateMutability": "view",
+      "note": "Returns 0 if DAO balance is 0 or user has no balance. Otherwise returns (user_balance / total_balance * 100)"
+    },
+    {
+      "name": "getUserVote",
+      "type": "view",
+      "inputs": [
+        {
+          "name": "proposalId",
+          "type": "uint256"
+        },
+        {
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "voteType",
+          "type": "uint8"
+        }
+      ],
+      "description": "Get user's vote on proposal",
+      "stateMutability": "view",
+      "note": "Returns 0 (NONE) if user hasn't voted"
+    },
+    {
+      "name": "getDAOBalance",
+      "type": "view",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "balance",
+          "type": "uint256"
+        }
+      ],
+      "description": "Get total DAO ETH balance",
+      "stateMutability": "view",
+      "note": "Returns address(this).balance"
+    }
+  ],
+
+  "events": [
+    {
+      "name": "ProposalCreated",
+      "inputs": [
+        {
+          "name": "proposalId",
+          "type": "uint256",
+          "indexed": true
+        },
+        {
+          "name": "creator",
+          "type": "address",
+          "indexed": true
+        },
+        {
+          "name": "recipient",
+          "type": "address",
+          "indexed": true
+        },
+        {
+          "name": "amount",
+          "type": "uint256",
+          "indexed": false
+        },
+        {
+          "name": "deadline",
+          "type": "uint256",
+          "indexed": false
+        }
+      ]
+    },
+    {
+      "name": "VoteCast",
+      "inputs": [
+        {
+          "name": "proposalId",
+          "type": "uint256",
+          "indexed": true
+        },
+        {
+          "name": "voter",
+          "type": "address",
+          "indexed": true
+        },
+        {
+          "name": "voteType",
+          "type": "uint8",
+          "indexed": false
+        },
+        {
+          "name": "forVotes",
+          "type": "uint256",
+          "indexed": false
+        },
+        {
+          "name": "againstVotes",
+          "type": "uint256",
+          "indexed": false
+        },
+        {
+          "name": "abstainVotes",
+          "type": "uint256",
+          "indexed": false
+        }
+      ]
+    },
+    {
+      "name": "ProposalExecuted",
+      "inputs": [
+        {
+          "name": "proposalId",
+          "type": "uint256",
+          "indexed": true
+        },
+        {
+          "name": "success",
+          "type": "bool",
+          "indexed": false
+        },
+        {
+          "name": "amount",
+          "type": "uint256",
+          "indexed": false
+        },
+        {
+          "name": "recipient",
+          "type": "address",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "name": "FundsReceived",
+      "inputs": [
+        {
+          "name": "from",
+          "type": "address",
+          "indexed": true
+        },
+        {
+          "name": "amount",
+          "type": "uint256",
+          "indexed": false
+        }
+      ]
+    }
+  ],
+
+  "stateVariables": [
+    {
+      "name": "proposalCount",
+      "type": "uint256",
+      "visibility": "public",
+      "description": "Total number of proposals created"
+    },
+    {
+      "name": "proposals",
+      "type": "mapping(uint256 => Proposal)",
+      "visibility": "public",
+      "description": "All proposals indexed by ID"
+    },
+    {
+      "name": "userVotes",
+      "type": "mapping(uint256 => mapping(address => VoteType))",
+      "visibility": "internal",
+      "description": "User's vote on each proposal"
+    }
+  ],
+
+  "externalDependencies": [
+    "ERC2771Context (OpenZeppelin)",
+    "ReentrancyGuard (OpenZeppelin, optional for ETH transfer safety)"
+  ],
+
+  "securityConsiderations": [
+    "Vote counts updated atomically (no partial state)",
+    "Execution is idempotent (executed flag prevents double-execution)",
+    "Reentrancy guard recommended for ETH transfer",
+    "Checks-effects-interactions pattern for external calls",
+    "No delegation or voting proxies (simple voting)",
+    "SafetyPeriod (7 days) prevents hasty execution of fund-transferring proposals"
+  ]
+}

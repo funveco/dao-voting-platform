@@ -1,0 +1,36 @@
+[
+  {
+    "id": "1",
+    "creator": "0x0000000000000000000000000000000000000000",
+    "title": "propuesta 01",
+    "description": "Ejemplo de propuesta001",
+    "recipient": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "amount": "260000000000000000",
+    "createdAt": "1772045017",
+    "votingDeadline": "1772649817",
+    "snapshotBlock": "0",
+    "targetAction": "recipient:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266|amount:260000000000000000",
+    "forVotes": "0",
+    "againstVotes": "0",
+    "abstainVotes": "0",
+    "status": 1,
+    "createdLocally": true
+  },
+  {
+    "id": "2",
+    "creator": "0x0000000000000000000000000000000000000000",
+    "title": "proposal 03",
+    "description": "ejemplo de proposal 003",
+    "recipient": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "amount": "240000000000000000",
+    "createdAt": "1772051163",
+    "votingDeadline": "1772655963",
+    "snapshotBlock": "0",
+    "targetAction": "recipient:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266|amount:240000000000000000",
+    "forVotes": "0",
+    "againstVotes": "0",
+    "abstainVotes": "0",
+    "status": 1,
+    "createdLocally": true
+  }
+]

@@ -1,0 +1,99 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+.nyc_output/
+
+# Next.js
+.next/
+out/
+
+# Production
+build/
+dist/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Foundry
+forge-cache/
+forge-broadcast/
+cache/
+artifacts/
+
+# Hardhat
+artifacts/
+cache/
+
+# Build outputs
+dist/
+build/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Cache
+.cache/
+
+# Solidity compiler cache
+cache/
+artifacts/
+
+# Deployment artifacts
+.deploy.json
+deployments/
+
+# Backup files
+*.bak
+*.backup
+*.orig
+
+# Lock files (optional - uncomment if you want to commit them)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Audio files (if any)
+*.mp3
+*.wav
+*.m4a
+
+# Video files (if any)
+*.mp4
+*.mov
+*.avi
+
+# Large files
+*.iso
+*.dmg
+
+# Secret files
+.secret
+.keys
+secrets/

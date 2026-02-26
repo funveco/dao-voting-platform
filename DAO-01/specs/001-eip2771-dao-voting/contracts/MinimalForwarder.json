@@ -1,0 +1,141 @@
+{
+  "contractName": "MinimalForwarder",
+  "description": "EIP-2771 Meta-Transaction Forwarder",
+  "implements": ["EIP-2771"],
+  
+  "types": {
+    "ForwardRequest": {
+      "from": "address",
+      "to": "address",
+      "value": "uint256",
+      "gas": "uint256",
+      "nonce": "uint256",
+      "deadline": "uint256",
+      "data": "bytes"
+    }
+  },
+
+  "functions": [
+    {
+      "name": "verify",
+      "type": "view",
+      "inputs": [
+        {
+          "name": "req",
+          "type": "ForwardRequest"
+        },
+        {
+          "name": "signature",
+          "type": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "valid",
+          "type": "bool"
+        }
+      ],
+      "description": "Verify if signature is valid for ForwardRequest",
+      "pure": false,
+      "stateMutability": "view"
+    },
+    {
+      "name": "execute",
+      "type": "function",
+      "inputs": [
+        {
+          "name": "req",
+          "type": "ForwardRequest"
+        },
+        {
+          "name": "signature",
+          "type": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "success",
+          "type": "bool"
+        },
+        {
+          "name": "returndata",
+          "type": "bytes"
+        }
+      ],
+      "description": "Execute meta-transaction if signature is valid",
+      "pure": false,
+      "stateMutability": "payable",
+      "prerequisites": [
+        "verify(req, signature) must return true",
+        "req.nonce must equal current nonce[req.from]",
+        "block.timestamp <= req.deadline"
+      ],
+      "sideEffects": [
+        "Increments nonce[req.from]",
+        "Calls req.to with req.data, sets _msgSender() = req.from",
+        "Transfers req.value ETH from relayer to target"
+      ]
+    },
+    {
+      "name": "getNonce",
+      "type": "view",
+      "inputs": [
+        {
+          "name": "from",
+          "type": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "nonce",
+          "type": "uint256"
+        }
+      ],
+      "description": "Get current nonce for user (for replay protection)",
+      "pure": false,
+      "stateMutability": "view"
+    }
+  ],
+
+  "events": [
+    {
+      "name": "MetaTransactionExecuted",
+      "inputs": [
+        {
+          "name": "from",
+          "type": "address",
+          "indexed": true
+        },
+        {
+          "name": "to",
+          "type": "address",
+          "indexed": true
+        },
+        {
+          "name": "nonce",
+          "type": "uint256",
+          "indexed": false
+        },
+        {
+          "name": "success",
+          "type": "bool",
+          "indexed": false
+        }
+      ]
+    }
+  ],
+
+  "inherits": ["ERC2771Context"],
+  "externalDependencies": [
+    "ECDSA (OpenZeppelin)",
+    "ERC2771Context (OpenZeppelin)"
+  ],
+
+  "securityConsiderations": [
+    "ECDSA signature validation required (prevent unauthorized execution)",
+    "Nonce increment to prevent replay attacks",
+    "Deadline check to prevent stale signatures",
+    "Signature scope includes chainId and contract address (prevent cross-chain/cross-contract replay)",
+    "No reentrancy risk (execute calls external contract, but nonce already incremented)"
+  ]
+}
