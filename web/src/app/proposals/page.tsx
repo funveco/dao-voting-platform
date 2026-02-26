@@ -248,8 +248,8 @@ export default function ProposalsPage() {
 
         {/* Proposals Grid */}
         {isLoading ? (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {[1, 2, 3, 4].map((i) => (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
               <Card
                 key={i}
                 className="h-48 animate-pulse bg-muted/20 border-border"
@@ -281,7 +281,7 @@ export default function ProposalsPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {sortedProposals.map((proposal) => (
               <ProposalCard
                 key={proposal.id}

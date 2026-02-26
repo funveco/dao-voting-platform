@@ -1,44 +1,44 @@
-# 🏛️ DAO Voting Platform
+# 🏛️ Plataforma de Votación DAO
 
-Production-ready DAO governance system with smart contracts and full-stack dApp.
+Sistema de gobernanza DAO listo para producción con contratos inteligentes y dApp completa.
 
-**Status**: 🟨 85% Production Ready | ✅ Smart Contracts Done | ⚠️ Needs Testnet & Audit
+**Estado**: 🟨 85% Listo para Producción | ✅ Contratos Inteligentes Completados | ⚠️ Necesita Testnet y Auditoría
 
 ---
 
-## 📊 Features
+## 📊 Características
 
-### Smart Contracts
-- ✅ Proposal creation with voting windows
-- ✅ Multi-option voting (For/Against/Abstain)
-- ✅ Automatic execution on approval
-- ✅ Double-voting prevention
-- ✅ Flash-loan protection (snapshot blocks)
-- ✅ Reentrancy guards (CEI pattern)
+### Contratos Inteligentes
+- ✅ Creación de propuestas con ventanas de votación
+- ✅ Votación multi-opción (A favor/En contra/Abstención)
+- ✅ Ejecución automática al aprobarse
+- ✅ Prevención de doble votación
+- ✅ Protección contra flash loans (bloques de snapshot)
+- ✅ Protecciones contra reentrancia (patrón CEI)
 
 ### Frontend
 - ✅ React/Next.js 16.1.6
-- ✅ MetaMask integration
-- ✅ Ethers.js v6 contract interaction
-- ✅ Proposal creation & voting UI
-- ✅ Real-time proposal list
-- ✅ Persistent JSON cache (development)
+- ✅ Integración con MetaMask
+- ✅ Interacción con contratos via Ethers.js v6
+- ✅ UI para crear propuestas y votar
+- ✅ Lista de propuestas en tiempo real
+- ✅ Cache JSON persistente (desarrollo)
 
-### Testing & Documentation
-- ✅ 26/26 tests passing (Foundry)
-- ✅ 88% code coverage
-- ✅ 3,738 lines of comprehensive documentation
-- ✅ Security analysis and risk mitigation
-- ✅ Production readiness guide
+### Pruebas y Documentación
+- ✅ 26/26 pruebas pasando (Foundry)
+- ✅ 88% de cobertura de código
+- ✅ 3,738 líneas de documentación completa
+- ✅ Análisis de seguridad y mitigación de riesgos
+- ✅ Guía de preparación para producción
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Inicio Rápido
 
-### Prerequisites
+### Requisitos Previos
 - Node.js 18+
-- Foundry (for smart contracts)
-- MetaMask browser extension
+- Foundry (para contratos inteligentes)
+- Extensión de navegador MetaMask
 
 ### Frontend
 
@@ -48,9 +48,9 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`
+Abre `http://localhost:3000`
 
-### Smart Contracts
+### Contratos Inteligentes
 
 ```bash
 cd sc
@@ -59,41 +59,41 @@ forge test
 forge coverage
 ```
 
-### Build
+### Construcción
 
 ```bash
 # Frontend
 cd web && npm run build
 
-# Smart Contracts
+# Contratos Inteligentes
 cd sc && forge build
 ```
 
 ---
 
-## 📚 Documentation
+## 📚 Documentación
 
-Complete documentation included:
+Documentación completa incluida:
 
-| Document | Purpose | Time |
-|----------|---------|------|
-| **DAO_QUICK_REFERENCE.md** | Quick reference with tables | 15 min |
-| **DAO_STORAGE_PATTERN.md** | Complete technical analysis | 60 min |
-| **DAO_STORAGE_EXAMPLE.sol** | Commented smart contract | 30 min |
-| **DAO_TESTING_GUIDE.md** | Testing strategies | 45 min |
-| **PRODUCTION_READINESS.md** | Production checklist | 15 min |
-| **ACTION_PLAN.md** | Step-by-step roadmap | 10 min |
-| **GITHUB_SETUP.md** | GitHub deployment guide | 15 min |
+| Documento | Propósito | Tiempo |
+|----------|-----------|--------|
+| **DAO_QUICK_REFERENCE.md** | Referencia rápida con tablas | 15 min |
+| **DAO_STORAGE_PATTERN.md** | Análisis técnico completo | 60 min |
+| **DAO_STORAGE_EXAMPLE.sol** | Contrato inteligente comentado | 30 min |
+| **DAO_TESTING_GUIDE.md** | Estrategias de pruebas | 45 min |
+| **PRODUCTION_READINESS.md** | Lista de verificación para producción | 15 min |
+| **ACTION_PLAN.md** | Hoja de ruta paso a paso | 10 min |
+| **GITHUB_SETUP.md** | Guía de despliegue en GitHub | 15 min |
 
 ---
 
-## 🏗️ Project Structure
+## 🏗️ Estructura del Proyecto
 
 ```
-├── sc/                          # Smart Contracts
+├── sc/                          # Contratos Inteligentes
 │   ├── src/
-│   │   ├── DAOVoting.sol        # Main governance contract
-│   │   └── MinimalForwarder.sol # Meta-transaction support
+│   │   ├── DAOVoting.sol        # Contrato principal de gobernanza
+│   │   └── MinimalForwarder.sol # Soporte para meta-transacciones
 │   ├── test/
 │   │   ├── DAOVoting.t.sol
 │   │   └── MinimalForwarder.t.sol
@@ -119,165 +119,165 @@ Complete documentation included:
 │   ├── public/
 │   └── package.json
 │
-├── Documentation files (DAO_*.md)
+├── Archivos de Documentación (DAO_*.md)
 ├── .gitignore
 └── README.md
 ```
 
 ---
 
-## 🔧 Configuration
+## 🔧 Configuración
 
-### Environment Variables
+### Variables de Entorno
 
-Create `web/.env.local`:
+Crea `web/.env.local`:
 
 ```env
-NEXT_PUBLIC_DAO_ADDRESS=0x...              # Contract address
-NEXT_PUBLIC_RPC_URL=http://localhost:8545  # RPC endpoint
-NEXT_PUBLIC_CHAIN_ID=31337                 # Chain ID (31337 for Anvil)
+NEXT_PUBLIC_DAO_ADDRESS=0x...              # Dirección del contrato
+NEXT_PUBLIC_RPC_URL=http://localhost:8545  # Endpoint RPC
+NEXT_PUBLIC_CHAIN_ID=31337                 # Chain ID (31337 para Anvil)
 ```
 
-For production (Sepolia):
+Para producción (Sepolia):
 ```env
-NEXT_PUBLIC_DAO_ADDRESS=0x...              # Sepolia address
+NEXT_PUBLIC_DAO_ADDRESS=0x...              # Dirección en Sepolia
 NEXT_PUBLIC_RPC_URL=https://sepolia.infura.io/v3/YOUR_KEY
 NEXT_PUBLIC_CHAIN_ID=11155111
 ```
 
 ---
 
-## 🧪 Testing
+## 🧪 Pruebas
 
-### Run Smart Contract Tests
+### Ejecutar Pruebas de Contratos Inteligentes
 
 ```bash
 cd sc
-forge test                  # Run all tests
-forge test -v              # Verbose output
+forge test                  # Ejecutar todas las pruebas
+forge test -v              # Salida detallada
 forge test --fuzz-runs 10000  # Fuzzing
-forge coverage             # Coverage report
+forge coverage             # Reporte de cobertura
 ```
 
-**Results**: ✅ 26/26 tests passing | 88% coverage
+**Resultados**: ✅ 26/26 pruebas pasando | 88% cobertura
 
 ---
 
-## 🚀 Production Readiness
+## 🚀 Preparación para Producción
 
-### Current Status
-- ✅ Smart contracts: 100% done
-- ✅ Tests: 26/26 passing
-- ✅ Documentation: Complete
-- ⚠️ Frontend integration: Partial (using cache)
-- ❌ Testnet deployment: Not yet
-- ❌ Security audit: Not yet
+### Estado Actual
+- ✅ Contratos inteligentes: 100% completados
+- ✅ Pruebas: 26/26 pasando
+- ✅ Documentación: Completa
+- ⚠️ Integración de frontend: Parcial (usando cache)
+- ❌ Despliegue en testnet: Aún no
+- ❌ Auditoría de seguridad: Aún no
 
-### Timeline to Production
+### Cronograma para Producción
 ```
-Week 1:   Frontend integration + Sepolia deploy
-Week 2-4: Security audit + Testnet validation
-Week 5:   Mainnet deployment
+Semana 1:   Integración frontend + Despliegue Sepolia
+Semana 2-4: Auditoría de seguridad + Validación en testnet
+Semana 5:   Despliegue en mainnet
 ```
 
-**See PRODUCTION_READINESS.md for full checklist**
+**Ver PRODUCTION_READINESS.md para la lista completa**
 
 ---
 
-## 🔒 Security
+## 🔒 Seguridad
 
-### Implemented Protections
-- ✅ **CEI Pattern**: Checks → Effects → Interactions
-- ✅ **Reentrancy Guard**: nonReentrant modifier
-- ✅ **Flash Loan Protection**: Snapshot blocks
-- ✅ **Double Voting Prevention**: Voter tracking
-- ✅ **Input Validation**: All parameters validated
-- ✅ **Balance Checks**: Real balance vs. totalDeposited
+### Protecciones Implementadas
+- ✅ **Patrón CEI**: Checks → Effects → Interactions
+- ✅ **Protección contra Reentrancia**: modificador nonReentrant
+- ✅ **Protección contra Flash Loans**: Bloques de snapshot
+- ✅ **Prevención de Doble Votación**: Seguimiento de votantes
+- ✅ **Validación de Entrada**: Todos los parámetros validados
+- ✅ **Verificaciones de Saldo**: Balance real vs. totalDeposited
 
-### Audit Status
-- ✅ Internal review (88% coverage)
-- ❌ External audit: Required before mainnet
+### Estado de Auditoría
+- ✅ Revisión interna (88% cobertura)
+- ❌ Auditoría externa: Requiere antes de mainnet
 
 ---
 
-## 📈 Smart Contract Details
+## 📈 Detalles de Contratos Inteligentes
 
-### Main Contract: DAOVoting.sol
+### Contrato Principal: DAOVoting.sol
 
-**Functions**:
-- `createProposal(recipient, amount, deadline)` - Create proposal
-- `vote(proposalId, voteType)` - Cast vote
-- `canExecute(proposalId)` - Check if executable
-- `executeProposal(proposalId)` - Execute approved proposal
+**Funciones**:
+- `createProposal(recipient, amount, deadline)` - Crear propuesta
+- `vote(proposalId, voteType)` - Emitir voto
+- `canExecute(proposalId)` - Verificar si es ejecutable
+- `executeProposal(proposalId)` - Ejecutar propuesta aprobada
 
-**Events**:
+**Eventos**:
 - `ProposalCreated`
 - `VoteCast`
 - `ProposalExecuted`
 
-**State**:
-- `proposals`: Mapping of all proposals
-- `votes`: Double-mapping of voter choices
-- `balances`: Member voting power
-- `proposalCount`: Sequential ID counter
+**Estado**:
+- `proposals`: Mapeo de todas las propuestas
+- `votes`: Doble mapeo de elecciones de votantes
+- `balances`: Poder de voto de miembros
+- `proposalCount`: Contador secuencial de ID
 
 ---
 
-## 🎯 Next Steps
+## 🎯 Próximos Pasos
 
-1. **Read**: PRODUCTION_READINESS.md (15 min)
-2. **Read**: ACTION_PLAN.md (10 min)
-3. **Implement**: Frontend integration (2-3 hours)
-4. **Deploy**: Sepolia testnet (1 day)
-5. **Audit**: External security audit (2-4 weeks)
-6. **Launch**: Mainnet (week 5+)
+1. **Leer**: PRODUCTION_READINESS.md (15 min)
+2. **Leer**: ACTION_PLAN.md (10 min)
+3. **Implementar**: Integración de frontend (2-3 horas)
+4. **Desplegar**: Testnet Sepolia (1 día)
+5. **Auditar**: Auditoría de seguridad externa (2-4 semanas)
+6. **Lanzar**: Mainnet (semana 5+)
 
 ---
 
-## 📞 Support
+## 📞 Soporte
 
-### Documentation
-- Smart contract details: `DAO_STORAGE_PATTERN.md`
-- Testing guide: `DAO_TESTING_GUIDE.md`
-- Quick reference: `DAO_QUICK_REFERENCE.md`
+### Documentación
+- Detalles de contratos inteligentes: `DAO_STORAGE_PATTERN.md`
+- Guía de pruebas: `DAO_TESTING_GUIDE.md`
+- Referencia rápida: `DAO_QUICK_REFERENCE.md`
 
-### Resources
+### Recursos
 - [Foundry Book](https://book.getfoundry.sh/)
 - [ethers.js v6](https://docs.ethers.org/v6/)
 - [Next.js Docs](https://nextjs.org/docs)
 
 ---
 
-## 📄 License
+## 📄 Licencia
 
-MIT - See LICENSE file
-
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-See PRODUCTION_READINESS.md for branch protection requirements.
+MIT - Ver archivo LICENSE
 
 ---
 
-## ⚠️ Disclaimer
+## 🤝 Contribuyendo
 
-**This code is provided for educational purposes.** Before deploying to mainnet:
-- Conduct thorough security audit
-- Thoroughly test on testnet
-- Review all smart contract code
-- Ensure compliance with local laws
+1. Haz fork del repositorio
+2. Crea una rama de característica
+3. Commitea tus cambios
+4. Haz push a la rama
+5. Crea un Pull Request
 
-**Use at your own risk.**
+Ver PRODUCTION_READINESS.md para requisitos de protección de ramas.
 
 ---
 
-**Created**: Feb 2025  
-**Status**: Alpha/Testing Phase  
-**Next Release**: Production v1.0 (5-6 weeks)
+## ⚠️ Aviso Legal
+
+**Este código se proporciona con fines educativos.** Antes de desplegar en mainnet:
+- Realiza una auditoría de seguridad exhaustiva
+- Prueba exhaustivamente en testnet
+- Revisa todo el código de contratos inteligentes
+- Asegúrate de cumplir con las leyes locales
+
+**Úsalo bajo tu propio riesgo.**
+
+---
+
+**Creado**: Febrero 2025  
+**Estado**: Fase Alfa/Pruebas  
+**Próximo Lanzamiento**: Producción v1.0 (5-6 semanas)

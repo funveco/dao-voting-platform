@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { ProposalStatus } from "@/lib/contracts";
+import { ProposalStatus, proposalStatusToString } from "@/lib/contracts";
 
 /**
  * Proposal Card Data Interface
@@ -155,7 +155,7 @@ export function ProposalCard({
             </CardDescription>
           </div>
           <Badge variant={getStatusBadgeVariant(proposal.status)} className="flex-shrink-0">
-            {proposal.status}
+            {proposalStatusToString(proposal.status)}
           </Badge>
         </div>
       </CardHeader>

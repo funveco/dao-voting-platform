@@ -80,18 +80,20 @@ class ProposalCache {
     description: string,
     recipient: string,
     amount: bigint,
-    deadline: number
+    deadline: number,
+    creator?: string,
+    snapshotBlock?: bigint
   ): Promise<LocalProposal> {
     const proposal: LocalProposal = {
       id: proposalId,
-      creator: "0x0000000000000000000000000000000000000000", // Mock creator
+      creator: creator || "0x0000000000000000000000000000000000000000",
       title,
       description,
       recipient,
       amount,
       createdAt: BigInt(Math.floor(Date.now() / 1000)),
       votingDeadline: BigInt(deadline),
-      snapshotBlock: BigInt(0),
+      snapshotBlock: snapshotBlock || BigInt(0),
       targetAction: `recipient:${recipient}|amount:${amount.toString()}`,
       forVotes: BigInt(0),
       againstVotes: BigInt(0),
@@ -115,6 +117,7 @@ class ProposalCache {
   private async saveToApi(): Promise<void> {
     try {
       const proposals = Array.from(this.proposals.values());
+      console.log("💾 Cache.saveToApi: Saving", proposals.length, "proposals");
 
       // Convert bigints to strings for JSON serialization
       const serializable = proposals.map((p) => ({
@@ -136,12 +139,13 @@ class ProposalCache {
       });
 
       if (response.ok) {
-        console.log(`💾 Cache: Saved ${proposals.length} proposals to disk`);
+        console.log(`✅ Cache.saveToApi: Saved ${proposals.length} proposals to disk`);
       } else {
-        console.warn(`⚠️  Cache: Failed to save to disk:`, await response.text());
+        const errorText = await response.text();
+        console.error(`⚠️  Cache.saveToApi: Failed to save to disk:`, errorText);
       }
     } catch (error) {
-      console.warn("⚠️  Cache: Error saving to API:", error);
+      console.error("⚠️  Cache.saveToApi: Error saving to API:", error);
     }
   }
 
@@ -149,8 +153,16 @@ class ProposalCache {
    * Get next available proposal ID
    */
   getNextId(): bigint {
-    const id = this.nextId;
-    this.nextId = this.nextId + BigInt(1);
+    // Recalculate next ID based on current proposals to avoid race conditions
+    let maxId = BigInt(0);
+    for (const [id] of this.proposals) {
+      if (id > maxId) {
+        maxId = id;
+      }
+    }
+    const id = maxId + BigInt(1);
+    console.log("🔢 Cache.getNextId: Calculated next ID:", id.toString(), "from max:", maxId.toString());
+    this.nextId = id + BigInt(1);
     return id;
   }
 
@@ -209,10 +221,12 @@ export async function saveProposalToCache(
   description: string,
   recipient: string,
   amount: bigint,
-  deadline: number
+  deadline: number,
+  creator?: string,
+  snapshotBlock?: bigint
 ): Promise<LocalProposal> {
   await ensureInitialized();
-  return cache.save(proposalId, title, description, recipient, amount, deadline);
+  return cache.save(proposalId, title, description, recipient, amount, deadline, creator, snapshotBlock);
 }
 
 export async function getNextProposalId(): Promise<bigint> {

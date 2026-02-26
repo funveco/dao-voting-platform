@@ -177,7 +177,8 @@ export class ProposalService {
       let receipt = null;
       let contractCallFailed = false;
       
-      // Try to call the contract
+      // Try to call the contract - if it fails OR contract address is zero address, use fallback mode
+      const isZeroAddress = this.config.governanceProposal === "0x0000000000000000000000000000000000000000";
       try {
         tx = await (governanceWithSigner as any).createProposal(
           input.recipient,
@@ -190,13 +191,30 @@ export class ProposalService {
         contractCallFailed = true;
       }
       
-      // If contract call failed, use fallback mode (local storage only)
-      if (contractCallFailed || !receipt) {
-        console.warn("⚠️  Using JSON cache for proposal storage (testing mode)");
-        console.warn("ℹ️  Contract address configured:", this.config.governanceProposal);
+      // Force fallback mode if contract address is zero or call failed
+      if (contractCallFailed || !receipt || isZeroAddress) {
+        console.warn("⚠️  Using JSON cache for proposal storage (testing/fallback mode)");
+        console.warn("ℹ️  Contract address:", this.config.governanceProposal);
         
         // Generate a sequential proposal ID from cache
         const proposalId = await getNextProposalId();
+        
+        // Get creator address from signer
+        let creatorAddress = "0x0000000000000000000000000000000000000000";
+        let snapshotBlock = BigInt(0);
+        try {
+          if (this.signer) {
+            creatorAddress = await this.signer.getAddress();
+            // Get current block number for snapshot
+            const block = await this.signer.provider?.getBlockNumber();
+            if (block) {
+              snapshotBlock = BigInt(block);
+              console.log("📸 Snapshot block:", snapshotBlock.toString());
+            }
+          }
+        } catch (err) {
+          console.warn("⚠️  Could not get creator address or block:", err);
+        }
         
         // Save proposal to JSON cache
         try {
@@ -206,7 +224,9 @@ export class ProposalService {
             input.description,
             input.recipient,
             amountInWei,
-            deadline
+            deadline,
+            creatorAddress,
+            snapshotBlock
           );
           console.log("✅ Proposal saved to JSON cache (fallback mode)");
           
@@ -262,6 +282,40 @@ export class ProposalService {
           "Failed to extract proposal ID from transaction",
           ContractErrorType.Unknown
         );
+      }
+
+      // Get creator address from signer
+      let creatorAddress = "0x0000000000000000000000000000000000000000";
+      let snapshotBlock = BigInt(0);
+      try {
+        if (this.signer) {
+          creatorAddress = await this.signer.getAddress();
+          // Get current block number for snapshot
+          const block = await this.signer.provider?.getBlockNumber();
+          if (block) {
+            snapshotBlock = BigInt(block);
+            console.log("📸 Snapshot block:", snapshotBlock.toString());
+          }
+        }
+      } catch (err) {
+        console.warn("⚠️  Could not get creator address:", err);
+      }
+
+      // Also save to cache as backup (in case contract query fails later)
+      try {
+        await saveProposalToCache(
+          proposalId,
+          input.title,
+          input.description,
+          input.recipient,
+          amountInWei,
+          deadline,
+          creatorAddress,
+          snapshotBlock
+        );
+        console.log("✅ Proposal also saved to JSON cache (backup)");
+      } catch (cacheErr) {
+        console.warn("⚠️  Failed to save to cache (non-critical):", cacheErr);
       }
 
       // Emit event for real-time updates
@@ -361,12 +415,27 @@ export class ProposalService {
       // These will appear in the UI even if contracts aren't deployed
       try {
         const cachedProposals = await getCachedProposals();
+        console.log("📦 getAllProposals: Loaded", cachedProposals.length, "cached proposals");
+        
         if (cachedProposals.length > 0) {
-          console.log(`📦 Adding ${cachedProposals.length} cached proposals to list`);
-          // Add cached proposals to the beginning (newest first)
-          proposals.unshift(...cachedProposals);
+          console.log("📦 Cached proposal IDs:", cachedProposals.map(p => p.id.toString()).join(", "));
+          
+          // If no contract proposals, just use cached ones
+          if (proposals.length === 0) {
+            proposals.push(...cachedProposals);
+          } else {
+            // Merge, avoiding duplicates by ID
+            const existingIds = new Set(proposals.map(p => p.id.toString()));
+            for (const cached of cachedProposals) {
+              if (!existingIds.has(cached.id.toString())) {
+                proposals.push(cached);
+              }
+            }
+          }
           // Update total count
           total = BigInt(proposals.length);
+        } else {
+          console.log("📦 getAllProposals: No cached proposals found");
         }
       } catch (err) {
         console.warn("Failed to load cached proposals:", err);
